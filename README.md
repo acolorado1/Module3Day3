@@ -111,7 +111,7 @@ ERCC4	pp	PLK1	RAD51C	FANCA	CDK18	MAPK14	DCLK1
 CIB1	pp	IRAK2	MAPK14	DCLK1
 TRAP1	pp	PLK1	LGR4	CDK18	MAPK14
 ```
-## Visualization 
+### Visualization 
 Visualization was done in Cytoscape. The following is the visualization of the example SIF file: 
 
 ![Image of subnetwork example](https://github.com/acolorado1/Module3Day3/blob/f1d3c6f64d2ff337f12c23b13ee7be9f235d0b07/Example1Subnetwork.png)
