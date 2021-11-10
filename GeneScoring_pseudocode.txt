@@ -1,0 +1,142 @@
+Initialize parser arguments and assign to variable parser
+Add argument nt integer default value 5000
+Add argument gmt string default value 'Input.gmt.txt'
+Add argument sdb string default value 'STRING.txt'
+Add argument sfd string default value 'subnetwork.sif'
+
+Parse arguments and assign to variable args
+
+Define function dict_loci that takes parameter f_experimental a .gmt formatted file path
+    loci_gene_dict -> Initialize empty dictionary
+    loci -> Initialize counter variable equal to 0
+    For every line in file
+        line_list -> Make tab separated line into a list using split function
+        Add to the loci_gene_dict dictionary the loci(key) and everything after the second index in line_list (value)
+        Add 1 to loci variable
+    return loci_gene_dict dictionary
+
+Define function dict_gene_interactions that takes parameter f_cofunction_net a STRING.txt database file
+    gene_interaction_dict -> Initialize empty dictionary
+    connected_gene_list -> Initialize empty list
+    for every line in file
+        line -> takes string variable and turns it to a list of 3 items using the split function
+        if string in first index of variable line does not exist in gene_interactions_dict
+            connected_gene_list -> empty list is reinitialized
+        adds to connected_gene_weight dictionary the first index item in line
+        adds to gene_interaction_dict zero index item in line (key) and connected_gene_list list is updated (value)
+    returns gene_interaction_dict dictionary
+
+Define function FA_subnetwork that takes .gmt formatted file path
+    loci_gene_dict -> calls function dict_loci
+    FAsubnet -> initializes empty list
+    for every loci in the loci_gene_dict dictionary:
+        rand_gene -> random gene is chosen at current loci
+        rand_gene is appended to FAsubnet list
+    returns FAsubnet
+
+Define gene_score_dict function that takes parameter f_experimental a .gmt formatted file path
+    loci_gene_dict -> calls dict_loci function
+    gene_score_dict -> initializes empty dictionary
+    for every loci in loci_gene_dict dictionary:
+        for every gene in loci:
+            Key of gene and empty list value are added to the gene_score_dict
+    returns gene_score_dict
+
+Define subnet_connections function that takes 3 parameters:
+gene -> specified gene of interest
+subnetwork -> list of 12 genes
+gene_interactions -> dictionary of all genes from STRING.txt database file (keys) and list of connected genes (values)
+    subnet_conn_dict -> initialize empty dictionary
+    if gene in gene_interactions dictionary:
+        total_list_conn -> list of connected genes to gene
+        subnet_minusgene -> initialize copy of subnetwork
+        remove gene from subnet_minusgene
+        conn_list -> initialize empty list
+        for conn_genes in subnet_minusgene:
+            if conn_genes in total_list_conn:
+                append conn_genes to conn_list
+    else should the gene not be in gene_interactions dictionary:
+        conn_list -> initialized as empty list
+    create gene key and list of connected genes value and add to subnet_conn_dict dictionary
+    returns subnet_conn_dict
+
+Define subnet_edgecounts function that takes parameter subnet_conn_dict dictionary
+    subnet_counts -> initialize empty dictionary
+    for every gene (key) in subnet_conn_dict dictionary:
+        add gene as key and length of list of connected genes as value to subnet_counts dictionary
+    returns subnet_counts dictionary of gene (key) and integer counts (value)
+
+Define gene_score function that takes 3 parameters:
+FAsubnetwork -> .gmt formatted file path string
+gene_interactions -> dictionary of genes (keys) and list of connected genes (values)
+numL -> the number of loci found in the .gmt formatted file
+    gene_scoring_dict -> calls gene_score_dict function
+    OGsubnetwork -> calls FA_subnetwork function
+    loci_genes -> calls dict_loci function
+    for loci (denoted index) from 0 to the numL specified:
+        keep_gene -> store gene string of subnetwork at that index
+        for every gene at that loci:
+            assign current gene to current index in generated subnetwork (OGsubnetwork)
+            sc -> calls subnet_connections function with current gene, current subnetwork, and gene_interactions
+                dictionary as parameter values
+            sec -> calls subnet_edgecounts using sc as parameter value
+            appends current gene as a key to gene_scoring_dict dictionary with integer value in sec dictionary as value
+        replaces current gene with stored original gene in current index
+    return gene_scoring_dict dictionary of all genes in .gmt formatted file (keys) and integer counts (values)
+
+Define n_trials_avgscore which takes 4 parameters:
+num -> integer of number of trials
+FAsubnetwork -> .gmt formatted file string path
+gene_interactions -> dictionary of genes (keys) and list of connected genes (values)
+numL -> integer of number of loci in .gmt formatted file
+    nscores_dict -> initialize empty dictionary
+    for trials from 0 to num:
+        onetrial -> calls gene_score with FAsubnetwork, gene_interactions, and numL as parameter values
+        if it is the first trial:
+            nscores_dict -> is just onetrial dictionary
+        else should it not be the first trial:
+            for every key in onetrial dictionary:
+                concatenate list values of the newly generated onetrial to the nscores_dictionary list values
+    for every key in the nscores_dict dictionary:
+        avg -> calculate the average of each value (list of integers)
+        new value of each key in nscores_dict dictionary will be the mean (float)
+    return nscores_dict dictionary
+
+Define createsiffile function that takes parameter conn_dict dictionary of genes (keys) and the list of their connected
+genes (values) and newdirectionary string file path of .sif file
+    initialize sif_file
+    for every key in conn_dict dictionary:
+        convert every item in the list value into a string
+        stringlist -> turns list of connected genes into a string where the genes are tab separated
+        row -> string containing gene, tab, pp, tab, and stringlist
+        writes row into the sif file
+    nothing is returned
+
+Define VisualizeGeneScoring function that takes four parameters:
+num (integer) -> number of trials to run
+FAsubnetwork (string) -> .gmt file path
+stringdatabase (string) -> STRING database file path
+newdirectory (string) -> file path where .sif file will be written to
+    calls dict_gene_interactions to generate dictionary of all genes in databased (keys) and list of connected genes (values)
+    calls loci_genes to create dictionary of loci (keys) and list of genes at loci (values)
+    calls n_trials_avgscore to create a dict of all genes in all loci (keys) and average gene score for num trials (value)
+    high_subnetwork -> empty list is initialized
+    for every loci in loci_genes:
+        highest_gene_score -> initialized with value 0
+        highest_gene -> initialized with empty string
+        for every gene at that loci:
+            if the gene score is higher than highest_gene_score:
+                highest_gene_score -> current gene score
+                highest_gene -> current gene
+        highest_gene is appended to high_subnetwork list
+    high_gene_conn_dict -> empty dictionary is initialized
+    for every gene in high_subnetwork dictionary:
+        gene_conn_dict -> calls subnet_connections function with gene, high_subnetwork, and gene_interactions as
+            parameter values
+        gene and list of connected genes are added as key value pairs to high_gene_conn_dict dictionary
+    createsiffile is called using high_gene_conn_dict and newdirectory as parameter values
+
+
+
+Call VisualizeGeneScoring with command line arguments
+VisualizeGeneScoring(args.nt, args.gmt, args.sdb, args.sfd)
