@@ -1,6 +1,6 @@
 # GeneScoring
 
-## Description: 
+## Description 
 
 GeneScoring is a script that takes a .gmt formatted file and a STRING.txt database and calculates a score of each gene
 found in the .gmt formatted file. The score is calculated by taking the average number of connections that the gene
