@@ -24,12 +24,11 @@ optional arguments:
   --nt NT, -n_trials NT
                         number of trials to run
   --gmt GMT, -gmt_formated_file GMT
-                        experimental loci file path (default Input.gmt.txt)
+                        experimental loci file path (default "Input.gmt.txt")
   --sdb SDB, -string_database SDB
-                        gene interaction file path (default STRING.txt)
+                        gene interaction file path (default "STRING.txt")
   --sfd SFD, -SIF_file_directory SFD
-                        file path of new sif file (default subnetwork.sif
-
+                        file path of new sif file (default "subnetwork.sif")
 ```
 ### Inputs 
 
@@ -115,6 +114,8 @@ TRAP1	pp	PLK1	LGR4	CDK18	MAPK14
 ## Visualization 
 Visualization was done in Cytoscape. The following is the visualization of the example SIF file: 
 
+![Image of subnetwork example](https://github.com/acolorado1/Module3Day3/blob/f1d3c6f64d2ff337f12c23b13ee7be9f235d0b07/Example1Subnetwork.png)
+
 ## Installation and Dependencies
 You must have Python 3 installed. Any Python 3 version should work but it was written in Python 3.9 using a Windows-based 
 operating system. Packages random, argparse 1.4.0, and the function mean from the statistics package will need to be 
@@ -123,4 +124,4 @@ installed.
 ## Contact 
 Angela Sofia Burkhart Colorado - angelasofia.burkhartcolorado@cuanschutz.edu
 
-Project Link: https://github.com/acolorado1/assignment2.git
+Project Link: https://github.com/acolorado1/Module3Day3.git
